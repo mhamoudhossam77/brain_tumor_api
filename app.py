@@ -12,7 +12,6 @@ model = load_model("brain_tumor.h5")
 
 # إعداد الصورة حسب متطلبات الموديل
 IMG_SIZE = (128, 128)
-
 @app.route('/predict', methods=['POST'])
 def predict():
     if 'file' not in request.files:
@@ -22,11 +21,14 @@ def predict():
 
     if file and file.filename.endswith(('png', 'jpg', 'jpeg')):
         try:
-            img = Image.open(file.stream).resize(IMG_SIZE)
+            # Open image and ensure it's in RGB mode (3 channels)
+            img = Image.open(file.stream).convert('RGB').resize(IMG_SIZE)
 
+            # Convert the image to an array and normalize it
             img_array = image.img_to_array(img)
             img_array = np.expand_dims(img_array, axis=0) / 255.0
 
+            # Make prediction
             prediction = model.predict(img_array)
             predicted_class = int(np.argmax(prediction))
             confidence = float(np.max(prediction))
