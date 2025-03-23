@@ -1,4 +1,4 @@
-Flask
-tensorflow-cpu
-numpy
-pillow
+Flask==2.1.2
+tensorflow==2.10.0
+numpy==1.21.2
+pillow==9.0.1

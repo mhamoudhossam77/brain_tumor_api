@@ -3,6 +3,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 from PIL import Image
 import numpy as np
+import os
 
 app = Flask(__name__)
 
@@ -19,23 +20,26 @@ def predict():
 
     file = request.files['file']
 
-    try:
-        img = Image.open(file.stream).resize(IMG_SIZE)
+    if file and file.filename.endswith(('png', 'jpg', 'jpeg')):
+        try:
+            img = Image.open(file.stream).resize(IMG_SIZE)
 
-        img_array = image.img_to_array(img)
-        img_array = np.expand_dims(img_array, axis=0) / 255.0
+            img_array = image.img_to_array(img)
+            img_array = np.expand_dims(img_array, axis=0) / 255.0
 
-        prediction = model.predict(img_array)
-        predicted_class = int(np.argmax(prediction))
-        confidence = float(np.max(prediction))
+            prediction = model.predict(img_array)
+            predicted_class = int(np.argmax(prediction))
+            confidence = float(np.max(prediction))
 
-        return jsonify({
-            'prediction': predicted_class,
-            'confidence': confidence
-        })
+            return jsonify({
+                'prediction': predicted_class,
+                'confidence': confidence
+            })
 
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    else:
+        return jsonify({'error': 'Invalid file type. Please upload a PNG, JPG, or JPEG image.'}), 400
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
