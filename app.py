@@ -1,4 +1,4 @@
- from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
 from PIL import Image
@@ -6,10 +6,10 @@ import numpy as np
 
 app = Flask(__name__)
 
-# تحميل النموذج
+ 
 model = load_model("brain_tumor.h5")
 
-# تحديد حجم الصورة
+ 
 IMG_SIZE = (128, 128)
 
 @app.route('/predict', methods=['POST'])
